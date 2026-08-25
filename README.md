@@ -17,30 +17,37 @@ This project documents the design, implementation, and operational testing of an
 
 ## 📐 Network Architecture Topology
 
-```text
-+-----------------------------------------------------------------------------------+
-|                                  VIRTUALBOX HOST                                  |
-|                                                                                   |
-|  +---------------------------+              +----------------------------------+  |
-|  |     Windows 10 Endpoint   |              |        Wazuh Server / SIEM       |  |
-|  |     IP: 10.0.2.15         |              |        IP: 10.0.2.8              |  |
-|  |                           |              |                                  |  |
-|  |  * Sysmon v15.15          |  Log Stream  |  * Wazuh Manager v4.10           |  |
-|  |  * Wazuh Agent v4.10     | ------------>|  * Filebeat Log Forwarder        |  |
-|  |  * Mimikatz (Attack Sim)  | (Wazuh/Port) |  * OpenSearch / Indexer           |  |
-|  +---------------------------+              +----------------------------------+  |
-|                                                              |                    |
-|                                                              | Alert Integration  |
-|                                                              v                    |
-|                                             +----------------------------------+  |
-|                                             |     TheHive IR Platform          |  |
-|                                             |     IP: 10.0.2.10                |  |
-|                                             |                                  |  |
-|                                             |  * TheHive 5 Framework           |  |
-|                                             |  * Apache Cassandra Database     |  |
-|                                             |  * Elasticsearch Engine          |  |
-|                                             +----------------------------------+  |
-+-----------------------------------------------------------------------------------+
+```mermaid
+flowchart LR
+    subgraph VB ["💻 VirtualBox Host Environment"]
+        
+        subgraph Win10 ["🪟 Windows 10 Endpoint<br/>(IP: 10.0.2.15)"]
+            WinComponents["<b>Active Stack:</b><br/>• Sysmon v15.15<br/>• Wazuh Agent v4.10<br/>• Mimikatz (Attack Sim)"]
+        end
+
+        subgraph WazuhServer ["🛡️ Wazuh Server / SIEM<br/>(IP: 10.0.2.8)"]
+            WazuhComponents["<b>Active Stack:</b><br/>• Wazuh Manager v4.10<br/>• Filebeat Log Forwarder<br/>• OpenSearch / Indexer"]
+        end
+
+        subgraph TheHivePlatform ["🚨 TheHive IR Platform<br/>(IP: 10.0.2.10)"]
+            HiveComponents["<b>Active Stack:</b><br/>• TheHive 5 Framework<br/>• Apache Cassandra DB<br/>• Elasticsearch Engine"]
+        end
+    end
+
+    %% Data Flows
+    Win10 -->|"Encrypted Log Stream<br/>(Port 1514)"| WazuhServer
+    WazuhServer -->|"Automated Alert Integration<br/>(Incident Creation)"| TheHivePlatform
+
+    %% Subgraph Styling
+    classDef win fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#01579b;
+    classDef wazuh fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#1b5e20;
+    classDef hive fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100;
+    classDef host fill:#f8f9fa,stroke:#495057,stroke-width:2px,stroke-dasharray: 5 5,color:#212529;
+
+    class Win10 win;
+    class WazuhServer wazuh;
+    class TheHivePlatform hive;
+    class VB host;
 ```
 
 ---

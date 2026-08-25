@@ -20,25 +20,20 @@ This project documents the design, implementation, and operational testing of an
 ```mermaid
 flowchart LR
     subgraph VB ["💻 VirtualBox Host Environment"]
+        direction LR
         
-        subgraph Win10 ["🪟 Windows 10 Endpoint<br/>(IP: 10.0.2.15)"]
-            WinComponents["<b>Active Stack:</b><br/>• Sysmon v15.15<br/>• Wazuh Agent v4.10<br/>• Mimikatz (Attack Sim)"]
-        end
-
-        subgraph WazuhServer ["🛡️ Wazuh Server / SIEM<br/>(IP: 10.0.2.8)"]
-            WazuhComponents["<b>Active Stack:</b><br/>• Wazuh Manager v4.10<br/>• Filebeat Log Forwarder<br/>• OpenSearch / Indexer"]
-        end
-
-        subgraph TheHivePlatform ["🚨 TheHive IR Platform<br/>(IP: 10.0.2.10)"]
-            HiveComponents["<b>Active Stack:</b><br/>• TheHive 5 Framework<br/>• Apache Cassandra DB<br/>• Elasticsearch Engine"]
-        end
+        Win10["<b>🪟 Windows 10 Endpoint</b><br/>IP: 10.0.2.15<br/><br/><b>Active Stack:</b><br/>• Sysmon v15.15<br/>• Wazuh Agent v4.10<br/>• Mimikatz (Attack Sim)"]
+        
+        WazuhServer["<b>🛡️ Wazuh Server / SIEM</b><br/>IP: 10.0.2.8<br/><br/><b>Active Stack:</b><br/>• Wazuh Manager v4.10<br/>• Filebeat Log Forwarder<br/>• OpenSearch / Indexer"]
+        
+        TheHivePlatform["<b>🚨 TheHive IR Platform</b><br/>IP: 10.0.2.10<br/><br/><b>Active Stack:</b><br/>• TheHive 5 Framework<br/>• Apache Cassandra DB<br/>• Elasticsearch Engine"]
     end
 
     %% Data Flows
     Win10 -->|"Encrypted Log Stream<br/>(Port 1514)"| WazuhServer
     WazuhServer -->|"Automated Alert Integration<br/>(Incident Creation)"| TheHivePlatform
 
-    %% Subgraph Styling
+    %% Subgraph & Node Styling
     classDef win fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#01579b;
     classDef wazuh fill:#e8f5e9,stroke:#388e3c,stroke-width:2px,color:#1b5e20;
     classDef hive fill:#fff3e0,stroke:#f57c00,stroke-width:2px,color:#e65100;
